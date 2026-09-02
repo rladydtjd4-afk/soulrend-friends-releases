@@ -1,106 +1,76 @@
 # 코블몬 서버 기능 조사 — MineColonies · Cobblemon Conquest 모드팩용
 
-포켓몬(코블몬) 서버들이 실제로 쓰는 기능을 두 축으로 정리했다:
-
-1. **코블몬 순정 데이터팩만으로 되는 것** — 스폰, 종(種) 데이터, 드롭, 진화 등
-2. **사이드모드(+전용 데이터팩)가 필요한 것** — 체육관/트레이너, 레이드, 경제/상점, GTS/원더트레이드, 교배, 전설 포켓몬 소환 등
+> 기준: **MineColonies - Cobblemon Conquest 2.3.0** (마인크래프트 1.21.1, NeoForge 21.1.218, 모드 283개)
+> 모드팩 zip의 manifest/modlist와 내장 데이터팩(Open Loader)을 직접 확인해서, **이미 팩에 들어있는 기능은 제외**하고 정리했다.
 
 ---
 
-## 1. 코블몬 자체 데이터팩 기능 (모드 추가 없이 가능)
+## 0. 이미 모드팩에 들어있어서 제외한 것들
 
-### 1-1. 커스텀 스폰 (`spawn_pool_world`)
-
-`data/<네임스페이스>/spawn_pool_world/` 아래 JSON 파일로 포켓몬별 자연 스폰을 완전히 제어할 수 있다.
-
-주요 필드:
-
-| 필드 | 역할 |
+| 기능 | 팩에 이미 있는 것 |
 |---|---|
-| `pokemon` | 종 이름 (예: `pikachu`, 패러독스는 `iron valiant`처럼 공백 유지) |
-| `level` | 스폰 레벨 범위 |
-| `bucket` | 희귀도 풀: `common` / `uncommon` / `rare` / `ultra-rare` |
-| `weight` | 같은 희귀도 풀 안에서의 가중치 (대략 0.1~10) |
-| `context` | 스폰 위치 유형: `grounded` / `submerged` / `surface` |
-| `biomes` | 바이옴 ID 또는 태그 |
-| `condition` / `anticondition` | 시간대, 달 위상, 발밑 블록, 구조물 등 세부 조건 / 금지 조건 |
-| `presets` | 미리 정의된 스폰 조건 템플릿 |
-
-- 조건 조합이 매우 정밀함 — 예: "새달(초승달) 밤 2:30~3:00, 바다 바이옴의 점토 블록 위에서만 스폰" 같은 것도 가능.
-- `pack.mcmeta`의 filter 기능으로 **기본 모드 스폰을 통째로 무효화**하고 서버만의 스폰 테이블로 갈아엎을 수 있다 (지역 리메이크 서버들이 쓰는 방식).
-- ⚠️ **`/reload`가 코블몬 데이터팩에는 안 먹힌다** — 월드 재접속/서버 재시작으로 갱신해야 함.
-
-### 1-2. 종 데이터 수정 (`species` / `species_additions`)
-
-- **species 파일**: 종족값(base stats), 타입, 특성, 배울 기술, 진화 조건, 드롭 테이블까지 종의 모든 데이터를 JSON으로 정의.
-- **species_additions**: 기존 종 파일 전체를 덮어쓰지 않고 **바꾸고 싶은 항목만 패치**하는 방식. 다른 데이터팩과의 호환을 위해 기존 포켓몬을 수정할 때는 이쪽이 권장된다. (전에 만든 한계돌파류 밸런스 조정도 이 방식으로 데이터팩화 가능)
-- **드롭**: species 파일의 `drops` 항목(`amount` + `entries`)으로 포켓몬 처치/포획 드롭 아이템을 지정.
-- **species_features**: "Aspect"를 만들어 리전 폼·색 변형 같은 **커스텀 폼/비주얼 변형**을 추가 (리소스팩과 조합).
-- 완전한 **커스텀 포켓몬 추가**도 데이터팩+리소스팩 조합으로 가능 (공식 튜토리얼 있음).
-
-### 1-3. 스폰 확장 데이터팩 사례 (그대로 가져다 쓸 수 있음)
-
-- **Cobblespawn**: 비전설 전 포켓몬을 자연 스폰시키는 데이터팩 (패러독스 포함).
-- **AllTheMons**: 코블몬에 없는 포켓몬을 채워주는 대형 데이터팩. 스폰 JSON 작성 시 종 이름 참조용으로도 쓰임.
+| GTS(거래소) | cobble-gts |
+| 경제/화폐 | CobbleDollars |
+| 트레이너/체육관 | Radical Cobblemon Trainers(+API, 텍스처팩, RCT Trainers+ 데이터팩) |
+| 레이드 | Cobblemon Raid Dens |
+| 배틀타워 | Cobblemon Battle Tower |
+| 메가진화/Z기술/다이맥스 | Cobblemon: Mega Showdown (+MegaShowdownTweaks, MSDLT 등 조정 데이터팩) |
+| 퀘스트 | FTB Quests + Cobblemon Quests Reloaded |
+| 대량발생 | Cobblemon Mass Outbreaks + Revamped Outbreaks |
+| 기술머신 | SimpleTMs |
+| 필드 루트(볼) | Cobbleloots |
+| 마을/포켓센터 구조물 | CobbleTowns 데이터팩 |
+| 스폰 확장 | ATM x MSD 데이터팩 (스폰 172종 + 종 추가 219건) |
+| 스타터킷/서버 관리 | Starter Kit, FTB Essentials/Ranks/Teams/Chunks, spark, Simple Voice Chat |
+| 도감/QoL | Pokenav, Living Dex, Cobblepedia, Box Link, Capture XP, Pokerus, Spawn Notification, Berry Pouch 등 |
 
 ---
 
-## 2. 서버들이 쓰는 사이드모드 + 전용 데이터팩
+## 1. 팩에 **없는** 서버 기능 — 추가 후보
 
-### 2-1. 트레이너 / 체육관 (진행도 시스템의 핵심)
+### 1-1. 교배 시스템 ⭐ 가장 큰 공백
+- **Cobbreeding**: 코블몬 본체(1.7.x)에는 교배가 없어서 서버들은 이 사이드모드를 쓴다. 알(20 에그 사이클 기준)이 인벤토리 소지 약 10분 후 부화. 개체값 유전 등 설정 가능.
+- 팩에 교배 관련 모드가 전혀 없으므로 서버라면 1순위 추가 후보.
 
-- **Radical Cobblemon Trainers (RCT)**: 1500명 이상의 트레이너(라디컬 레드/언바운드/BDSP 기반)가 자연 스폰. 체육관 관장 전투와 진행도(관장은 재도전 횟수 3회) 포함. **데이터팩으로 커스텀 트레이너/팀을 추가**할 수 있어 서버 전용 관장을 만들 수 있음. 다운로드 850만+로 사실상 표준.
-  - 부속: **Radical Gyms & Structures** (관장용 체육관 구조물 자연 생성), **Radical Trainers Structures** 데이터팩, **More Radical Trainers: SV** 같은 트레이너 추가 데이터팩.
-- **Brecher's Trainers**: 서버 운영자가 배치형 상설 트레이너를 직접 만들어 두는 방식. 전투 룰/제한 지정 가능 — 플레이어가 지은 체육관에 관장 NPC를 세우는 용도로 적합.
+### 1-2. 원더트레이드 (랜덤 교환)
+- GTS는 이미 있지만 원더트레이드는 없음.
+- **Cobblemon Wonder Trade** 또는 **zonary123 Cobble WonderTrade**. 서버 전용(server-only) 빌드가 있어 플레이어들이 클라이언트에 따로 설치하지 않아도 되는 구현도 있음.
 
-### 2-2. 레이드
+### 1-3. 전설 포켓몬 키 아이템 소환
+- **Myths and Legends** (사이드모드 + 필수 데이터팩): 조수의 방울·하늘피리 같은 **키 아이템을 들고 있으면 해당 전설/환상이 그 플레이어 주변에만 스폰**. 조건(바이옴·추가 아이템·파티 구성)은 데이터팩으로 정의. 키 아이템은 루트 상자 드롭(확률 설정 가능).
+- 팩에는 없음. 단, Mega Showdown이 이미 전설 관련 콘텐츠를 다루므로 스폰 중복이 없게 데이터팩 조정 필요.
 
-- **Cobblemon Raid Dens**: 레이드 둥지 추가. **데이터팩으로 커스텀 레이드 보스 제작/기존 보스 수정** 가능. CobbleDollars 연동으로 레이드 보상 화폐 지급.
-- **Matyah's Overhauled Cobblemon Raids** 데이터팩: 레이드 보상 테이블 전면 리밸런스 사례 (티어별 화폐 보상 등).
+### 1-4. 편의 명령어
+- **CobblemonExtras**: `/pokeheal`, `/pc`, `/ivs`, `/evs`, 배틀 신청 등 서버 필수 명령어 모음. 팩에 없음.
 
-### 2-3. 경제 / 상점
+### 1-5. 운영자 배치형 체육관 NPC
+- 팩의 RCT는 트레이너가 **자연 스폰**되는 방식. 서버에서 흔히 하는 "직접 지은 체육관에 관장 NPC 고정 배치 + 배틀 룰 지정"은 **Brecher's Trainers**가 담당. RCT와 병행 사용 가능.
+- 참고: RCT 자체도 데이터팩으로 커스텀 트레이너/팀 추가를 지원하므로, 모드를 안 늘리고 RCT 데이터팩으로 서버 전용 관장을 만드는 방법도 있음.
 
-- **CobbleDollars**: 코블몬 서버 표준 화폐 모드. 상인 NPC(Cobblemerchant) 제공, 상점 목록은 설정/데이터팩으로 구성.
-  - **CobbleDollar Shops** 데이터팩: 주민 상점을 Cobblemerchant로 교체해 서버 화폐를 일원화한 사례.
-- **Cobblemon Economy**: NPC 상점 + 이중 화폐 + **퀘스트 NPC 진행 시스템**(포획/전투/레이드/배틀타워 보상, 순환 퀘스트 보드)까지 묶은 올인원 경제 모드. CobbleDollars·Impactor 브릿지 지원.
-- **Impactor**: 범용 서버 경제 API (다른 모드들과 화폐 연동용).
+### 1-6. 자작 데이터팩 (모드 추가 없이 가능한 것)
+이 팩은 **Open Loader**를 쓰고 있어서 `config/openloader/packs/`에 zip만 넣으면 데이터팩이 적용된다 (CobbleTowns, ATM x MSD가 이미 이 방식). 직접 만들 수 있는 것:
 
-### 2-4. 거래 (GTS / 원더트레이드)
+- **커스텀 스폰** (`data/cobblemon/spawn_pool_world/`): 종별 스폰 바이옴·레벨·희귀도(bucket/weight)·시간대·달 위상·발밑 블록·구조물 조건 제어. 콜로니 주변 테마 스폰, 기간 한정 스폰 이벤트 등.
+- **종 데이터 패치** (`species_addition`): 종족값·타입·기술·진화·드롭만 부분 수정. 예전에 만든 한계돌파식 밸런스 조정을 이 방식으로 데이터팩화 가능. (팩의 OA_Arsenal 데이터팩이 정확히 이 구조)
+- **드롭/루트 테이블** 조정, **species_features**로 커스텀 폼·색 변형(리소스팩 병행).
+- ⚠️ 코블몬 데이터팩은 `/reload`로 갱신 안 됨 — 월드 재접속/서버 재시작 필요.
 
-- **Cobblemon GTS**: 포켓몬·아이템을 등록해 파는 글로벌 거래소. Fabric/NeoForge 모두 지원.
-- **Cobblemon Wonder Trade** / **zonary123 Cobble WonderTrade**: 랜덤 포켓몬 교환. 서버 전용(server-only) 빌드도 있어 클라이언트 설치 없이 운영 가능한 것도 있음.
-
-### 2-5. 교배
-
-- **Cobbreeding**: 코블몬 본체(1.7.x 기준)에는 교배가 없어서 서버들은 이 사이드모드를 사용. 기본 설정에서 알(20 에그 사이클 기준)이 인벤토리 소지 약 10분 후 부화.
-
-### 2-6. 전설 포켓몬 소환 (키 아이템 방식)
-
-- **Myths and Legends** (사이드모드 + 필수 데이터팩): 조수의 방울, 하늘피리 같은 **키 아이템을 들고 있으면 해당 전설/환상 포켓몬이 그 플레이어 주변에만 스폰**. 조건(바이옴·추가 아이템·파티 구성)은 데이터팩으로 정의.
-  - 키 아이템은 루트 상자에서 획득(확률·루트 테이블 설정 가능), 인벤토리 검사 주기는 config로 조정(기본 2분 30초).
-  - v1.3 이후로는 키 아이템 스폰 조건을 쓰려면 전용 데이터팩이 필수.
-
-### 2-7. 편의 명령어
-
-- **CobblemonExtras**: `/pokeheal`, `/pc`, `/ivs`, `/evs`, 배틀 신청 등 서버 필수 편의 명령어 모음.
+### 1-7. 추가하지 않는 게 나은 것
+- **Cobblemon Economy**: 화폐+상점+퀘스트 올인원이지만 CobbleDollars·FTB Quests와 역할이 겹침.
+- **Cobblespawn / AllTheMons 계열 스폰팩**: ATM x MSD가 이미 스폰 확장을 담당 — 중복 스폰 위험.
+- **Impactor**: 범용 경제 API인데 이 팩 화폐는 CobbleDollars로 일원화되어 있어 불필요.
 
 ---
 
-## 3. 이 모드팩에 적용할 때 제안
+## 2. 적용 순서 제안
 
-MineColonies + Cobblemon 조합이라는 특성을 살리면:
+1. **Cobbreeding + CobblemonExtras** — 모드 2개로 서버 필수 기능(교배·편의 명령어) 확보
+2. **원더트레이드** — 멀티 콘텐츠 보강 (GTS와 세트)
+3. **Myths and Legends** — 전설 사냥 엔드콘텐츠 (MSD와 스폰 조정 필요)
+4. **자작 데이터팩** — openloader/packs에 서버 전용 스폰/밸런스 팩 추가 (모드 추가 없음, 리스크 최소)
+5. (선택) **Brecher's Trainers** — 플레이어/운영자 체육관 운영 시
 
-1. **1단계 (데이터팩만, 모드 추가 없음)** — 리스크 최소
-   - `spawn_pool_world` 커스텀 스폰 팩: 콜로니 주변/특정 바이옴에 테마 스폰 배치, 희귀 스폰 이벤트(달 위상·시간 조건).
-   - `species_additions`: 드롭 테이블 조정(서버 경제용 아이템), 한계돌파 밸런스의 데이터팩화.
-2. **2단계 (핵심 사이드모드)** — 서버 느낌을 내는 최소 세트
-   - RCT(+Gyms & Structures) 또는 Brecher's Trainers → 체육관/배지 진행도
-   - CobbleDollars(+상점 데이터팩) → 경제
-   - CobblemonExtras → 편의 명령어
-3. **3단계 (멀티플레이 콘텐츠)**
-   - Cobblemon GTS + Wonder Trade, Cobbreeding, Cobblemon Raid Dens, Myths and Legends
-
-⚠️ 공통 주의: 모드팩의 마인크래프트 버전(1.20.1/1.21.1 여부)과 로더(Forge/NeoForge/Fabric), 코블몬 버전에 맞는 사이드모드 빌드를 골라야 함. 코블몬 데이터팩은 `/reload`로 갱신되지 않으므로 테스트 시 재접속 필요.
+⚠️ 공통 주의: 팩이 **NeoForge 1.21.1**이므로 사이드모드는 NeoForge 1.21.1 빌드를 우선 선택. 팩에 Sinytra Connector(+Forgified Fabric API)가 있어 Fabric 전용 사이드모드도 구동될 수 있지만(cobble-gts가 그 예) 개별 테스트 필요.
 
 ---
 
@@ -108,19 +78,11 @@ MineColonies + Cobblemon 조합이라는 특성을 살리면:
 
 - [Cobblemon Wiki — Creating Custom Spawns](https://wiki.cobblemon.com/index.php/Tutorials/Creating_Custom_Spawns)
 - [Cobblemon Wiki — Spawn Pool World](https://wiki.cobblemon.com/index.php/Spawn_Pool_World)
-- [Cobblemon Wiki — Species](https://wiki.cobblemon.com/index.php/Species)
-- [Cobblemon Wiki — Species Additions](https://wiki.cobblemon.com/index.php/Species_Additions)
-- [Cobblemon Wiki — Creating A Custom Pokemon](https://wiki.cobblemon.com/index.php/Tutorials/Creating_A_Custom_Pokemon)
-- [Cobblespawn (CurseForge)](https://www.curseforge.com/minecraft/data-packs/cobblespawn)
-- [Radical Cobblemon Trainers (Modrinth)](https://modrinth.com/mod/rctmod) / [공식 문서](https://srcmc.gitlab.io/rct/docs/0.13/gameplay/trainers/)
-- [Radical Gyms & Structures (CurseForge)](https://www.curseforge.com/minecraft/mc-mods/radical-gyms-structures-cobblemon)
-- [Brecher's Trainers (CurseForge)](https://www.curseforge.com/minecraft/mc-mods/brechers-cobblemon-trainers)
-- [Cobblemon Raid Dens (Modrinth)](https://modrinth.com/mod/cobblemonraiddens)
-- [Matyah's Raid Dens 데이터팩 (CurseForge)](https://www.curseforge.com/minecraft/data-packs/matyahs-configs-cobblemon-raid-dens-datapack)
-- [Cobblemon Economy (Modrinth)](https://modrinth.com/mod/cobblemon-economy)
-- [CobbleDollar Shops 데이터팩 (Modrinth)](https://modrinth.com/datapack/cobbledollar-shops)
-- [Cobblemon GTS (Modrinth)](https://modrinth.com/mod/cobblemon-gts)
-- [Cobblemon Wonder Trade (Modrinth)](https://modrinth.com/mod/cobblemon-wonder-trade)
+- [Cobblemon Wiki — Species](https://wiki.cobblemon.com/index.php/Species) / [Species Additions](https://wiki.cobblemon.com/index.php/Species_Additions)
+- [MineColonies - Cobblemon Conquest (CurseForge)](https://www.curseforge.com/minecraft/modpacks/minecolonies-cobblemon-conquest) — 2.3.0 zip의 manifest.json/modlist.html/내장 데이터팩 직접 확인
+- [Cobbreeding 관련 — PokeTools 교배 가이드](https://www.poketools.com/cobblemon-breeding)
+- [Cobblemon Wonder Trade (Modrinth)](https://modrinth.com/mod/cobblemon-wonder-trade) / [zonary123 Cobble WonderTrade](https://modrinth.com/mod/zonary123-cobble-wondertrade)
 - [Myths and Legends 사이드모드 (Modrinth)](https://modrinth.com/mod/cobblemon-myths-and-legends-sidemod) / [데이터팩](https://modrinth.com/datapack/myths-and-legends-datapack)
 - [CobblemonExtras (Modrinth)](https://modrinth.com/mod/cobblemonextras)
-- [Cobbreeding 관련 — PokeTools 교배 가이드](https://www.poketools.com/cobblemon-breeding)
+- [Brecher's Trainers (CurseForge)](https://www.curseforge.com/minecraft/mc-mods/brechers-cobblemon-trainers)
+- [Radical Cobblemon Trainers 공식 문서](https://srcmc.gitlab.io/rct/docs/0.13/gameplay/trainers/)

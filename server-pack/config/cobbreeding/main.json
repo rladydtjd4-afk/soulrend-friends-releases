@@ -9,7 +9,6 @@
   "dittoAndDittoAllowParadox": false,
   "dittoAndDittoAllowUltraBeast": false,
   "dittoAndDittoAllowUndiscovered": false,
-  "customColors": false,
   "allowHoppersToPullFromPastureBlock": true,
   "maxNumberOfActivatedPasturePerPlayer": 3,
   "pastureInventorySize": 5,

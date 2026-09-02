@@ -1,0 +1,17 @@
+{
+  "minBreedingTimeInTicks": 8000,
+  "maxBreedingTimeInTicks": 14000,
+  "eggHatchMultiplier": 0.5,
+  "hiddenAbilitiesEnabled": true,
+  "forcedAbilitiesEnabled": false,
+  "dittoAndDittoRandomEgg": false,
+  "dittoAndDittoAllowLegendary": false,
+  "dittoAndDittoAllowParadox": false,
+  "dittoAndDittoAllowUltraBeast": false,
+  "dittoAndDittoAllowUndiscovered": false,
+  "customColors": false,
+  "allowHoppersToPullFromPastureBlock": true,
+  "maxNumberOfActivatedPasturePerPlayer": 3,
+  "pastureInventorySize": 5,
+  "eggEncryptionEnabled": true
+}

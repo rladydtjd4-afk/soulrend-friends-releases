@@ -1,0 +1,5 @@
+{
+  "tradeCooldownMinutes": 10,
+  "levelMatching": true,
+  "levelMatchRange": 10
+}
